@@ -1,6 +1,6 @@
 {
   "name": "speakerdeck",
-  "version": "2.0.0",
+  "version": "3.0.0",
   "description": "Speakerdeck API",
   "main": "dist/speakerdeck.js",
   "scripts": {
@@ -11,6 +11,7 @@
     "speakerdeck",
     "presentations"
   ],
+  "repository": "https://github.com/paulohp/speakerdeck",
   "author": "Paulo Pires",
   "license": "MIT",
   "dependencies": {
