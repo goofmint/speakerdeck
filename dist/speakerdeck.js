@@ -35,12 +35,26 @@ var Speakerdeck = (function () {
     // constructor() {
     //
     // }
-    value: function getUser(username) {
+    value: function getUser(username, cb) {
       var url = '' + baseUrl + username;
       var $ = undefined;
+      var user = {};
       _request2['default'].get(url, function (err, response, body) {
         $ = _cheerio2['default'].load(body);
-        console.log($('.sidebar h2').text());
+        user.display_name = $('.sidebar h2').text();
+        user.bio = $('.sidebar div.bio p').text();
+        user.starts = Number($('.sidebar ul.delimited').first().text().match(/\d+/)[0]);
+        var talks = $('.talks .public');
+        var talk = {};
+        user.talks = [];
+        for (var i = 0; i < talks.length; i++) {
+          talk.title = $(talks[i]).find('h3.title a').text();
+          talk.date = new Date($(talks[i]).find('p.date').text().trim().split('by')[0]);
+          talk.thumb = $(talks[i]).find('.slide_preview img').attr('src');
+          talk.link = '' + baseUrl + $(talks[i]).find('.slide_preview').attr('href');
+          user.talks.push(talk);
+        }
+        return cb(null, user);
       });
     }
   }]);
