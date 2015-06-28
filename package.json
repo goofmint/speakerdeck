@@ -2,9 +2,10 @@
   "name": "speakerdeck",
   "version": "2.0.0",
   "description": "Speakerdeck API",
-  "main": "index.js",
+  "main": "dist/speakerdeck.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "./node_modules/mocha/bin/mocha",
+    "postinstall": "gulp babel"
   },
   "keywords": [
     "speakerdeck",
