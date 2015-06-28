@@ -40,6 +40,10 @@ var Speakerdeck = (function () {
       var $ = undefined;
       var user = {};
       _request2['default'].get(url, function (err, response, body) {
+        if (response.statusCode !== 200) {
+          var error = new Error(response.headers.status);
+          return cb(error);
+        }
         $ = _cheerio2['default'].load(body);
         user.display_name = $('.sidebar h2').text();
         user.bio = $('.sidebar div.bio p').text();
@@ -55,6 +59,42 @@ var Speakerdeck = (function () {
           user.talks.push(talk);
         }
         return cb(null, user);
+      });
+    }
+  }, {
+    key: 'getUserTalk',
+    value: function getUserTalk(opts, cb) {
+      var url = '' + baseUrl + opts.username + '/' + opts.talk;
+      var $ = undefined;
+      var talk = {};
+      _request2['default'].get(url, function (err, response, body) {
+        $ = _cheerio2['default'].load(body);
+        talk.title = $('#talk-details header h1').text();
+        talk.date = new Date($('#talk-details header p mark').first().text());
+        talk.category = $('#talk-details header p mark').last().text();
+        talk.description = $('.description p').text();
+        talk.stars = $('.stargazers').text().match(/\d+/)[0];
+        talk.views = $('.views span').text().split(' ')[0];
+        talk.link = url;
+        return cb(null, talk);
+      });
+    }
+  }, {
+    key: 'getCategories',
+    value: function getCategories(cb) {
+      var $ = undefined;
+      var categories = [];
+      var category = {};
+      _request2['default'].get(baseUrl, function (err, response, body) {
+        $ = _cheerio2['default'].load(body);
+        var el = $('.sidebar ul li');
+        for (var i = 0; i < el.length; i++) {
+          category.name = $(el[i]).find('a').text();
+          category.link = '' + baseUrl + $(el[i]).find('a').attr('href');
+
+          categories.push(category);
+        }
+        return cb(null, categories);
       });
     }
   }]);
