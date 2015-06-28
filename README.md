@@ -1,15 +1,14 @@
 # Speakerdeck API
-## Unofficial API for Speakerdeck
 
-## How to install
+### How to install
 `npm install speakerdeck`
 
-## How to use
+### How to use
 
-```
+```javascript
 var Speakerdeck = require('speakerdeck');
 
-speakerdeck = new Speakerdeck({});
+var speakerdeck = new Speakerdeck({});
 
 speakerdeck.getUser('paulohp', function(err, data){
   if(!err)
