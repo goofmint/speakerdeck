@@ -16,10 +16,6 @@ var _request = require('request');
 
 var _request2 = _interopRequireDefault(_request);
 
-var _cheerio = require('cheerio');
-
-var _cheerio2 = _interopRequireDefault(_cheerio);
-
 var _qs = require('qs');
 
 var _qs2 = _interopRequireDefault(_qs);

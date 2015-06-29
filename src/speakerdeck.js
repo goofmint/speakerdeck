@@ -1,6 +1,5 @@
 import { install } from 'source-map-support';install();
 import request from 'request';
-import cheerio from 'cheerio';
 import qs from 'qs';
 import _ from 'lodash';
 import extract from '../lib/extract-text'
