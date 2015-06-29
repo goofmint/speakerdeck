@@ -1,11 +1,10 @@
 {
   "name": "speakerdeck",
-  "version": "3.1.0",
+  "version": "3.1.1",
   "description": "Speakerdeck API",
   "main": "dist/speakerdeck.js",
   "scripts": {
-    "test": "./node_modules/mocha/bin/mocha",
-    "postinstall": "gulp babel"
+    "test": "./node_modules/mocha/bin/mocha"
   },
   "keywords": [
     "speakerdeck",
