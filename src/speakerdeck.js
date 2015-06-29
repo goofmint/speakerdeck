@@ -41,6 +41,10 @@ export default class Speakerdeck {
     let $;
     let talk = {};
     request.get(url, (err, response, body) => {
+      if (response.statusCode !== 200) {
+        let error = new Error(response.headers.status)
+        return cb(error);
+      }
       $ = cheerio.load(body);
       talk.title = $('#talk-details header h1').text();
       talk.date = new Date($('#talk-details header p mark').first().text());
@@ -53,10 +57,34 @@ export default class Speakerdeck {
     });
   }
 
+  getUserStars(username, cb) {
+    let url = `${baseUrl}${username}/stars`;
+    let $;
+    let stars = [];
+    request.get(url, (err, response, body) => {
+      $ = cheerio.load(body);
+      let talks = $('.talks .public');
+      for (var i = 0; i < talks.length; i++) {
+        let talk = {};
+        talk.title = $(talks[i]).find('h3.title a').text();
+        talk.date = new Date($(talks[i]).find('p.date').text().trim().split('by')[0]);
+        talk.thumb = $(talks[i]).find('.slide_preview img').attr('src');
+        talk.link = `${baseUrl}${$(talks[i]).find('.slide_preview').attr('href')}`;
+        talk.author = $(talks[i]).find('p.date a').text();
+        stars.push(talk);
+      }
+      return cb(null, stars);
+    });
+  }
+
   getCategories(cb) {
     let $;
     let categories = [];
     request.get(baseUrl, (err, response, body) => {
+      if (response.statusCode !== 200) {
+        let error = new Error(response.headers.status)
+        return cb(error);
+      }
       $ = cheerio.load(body);
       let el = $('.sidebar ul li');
       for (var i = 0; i < el.length; i++) {
@@ -77,6 +105,10 @@ export default class Speakerdeck {
     let results = [];
     let pages = 0;
     request.get(url, (err, response, body) => {
+      if (response.statusCode !== 200) {
+        let error = new Error(response.headers.status)
+        return cb(error);
+      }
       $ = cheerio.load(body);
       let elements = $('.talks .talk');
       pages = $('.page').last().find('a').text();

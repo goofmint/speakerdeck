@@ -76,6 +76,10 @@ var Speakerdeck = (function () {
       var $ = undefined;
       var talk = {};
       _request2['default'].get(url, function (err, response, body) {
+        if (response.statusCode !== 200) {
+          var error = new Error(response.headers.status);
+          return cb(error);
+        }
         $ = _cheerio2['default'].load(body);
         talk.title = $('#talk-details header h1').text();
         talk.date = new Date($('#talk-details header p mark').first().text());
@@ -88,11 +92,36 @@ var Speakerdeck = (function () {
       });
     }
   }, {
+    key: 'getUserStars',
+    value: function getUserStars(username, cb) {
+      var url = '' + baseUrl + username + '/stars';
+      var $ = undefined;
+      var stars = [];
+      _request2['default'].get(url, function (err, response, body) {
+        $ = _cheerio2['default'].load(body);
+        var talks = $('.talks .public');
+        for (var i = 0; i < talks.length; i++) {
+          var talk = {};
+          talk.title = $(talks[i]).find('h3.title a').text();
+          talk.date = new Date($(talks[i]).find('p.date').text().trim().split('by')[0]);
+          talk.thumb = $(talks[i]).find('.slide_preview img').attr('src');
+          talk.link = '' + baseUrl + $(talks[i]).find('.slide_preview').attr('href');
+          talk.author = $(talks[i]).find('p.date a').text();
+          stars.push(talk);
+        }
+        return cb(null, stars);
+      });
+    }
+  }, {
     key: 'getCategories',
     value: function getCategories(cb) {
       var $ = undefined;
       var categories = [];
       _request2['default'].get(baseUrl, function (err, response, body) {
+        if (response.statusCode !== 200) {
+          var error = new Error(response.headers.status);
+          return cb(error);
+        }
         $ = _cheerio2['default'].load(body);
         var el = $('.sidebar ul li');
         for (var i = 0; i < el.length; i++) {
@@ -114,6 +143,10 @@ var Speakerdeck = (function () {
       var results = [];
       var pages = 0;
       _request2['default'].get(url, function (err, response, body) {
+        if (response.statusCode !== 200) {
+          var error = new Error(response.headers.status);
+          return cb(error);
+        }
         $ = _cheerio2['default'].load(body);
         var elements = $('.talks .talk');
         pages = $('.page').last().find('a').text();

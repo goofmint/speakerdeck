@@ -38,4 +38,12 @@ describe('Speakerdeck', () => {
       done();
     });
   });
+
+  it('should be return an array of talks stared by the user', (done) => {
+    s.getUserStars('paulohp', (err, data) => {
+      expect(data).to.have.length.of.at.least(14);
+      expect(err).to.be.a('null');
+      done();
+    });
+  });
 });
