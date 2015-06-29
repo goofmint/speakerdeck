@@ -3,6 +3,7 @@ import request from 'request';
 import cheerio from 'cheerio';
 import qs from 'qs';
 import _ from 'lodash';
+import extract from '../lib/extract-text'
 
 const baseUrl = 'https://speakerdeck.com/';
 export default class Speakerdeck {
@@ -18,18 +19,18 @@ export default class Speakerdeck {
         let error = new Error(response.headers.status)
         return cb(error);
       }
-      $ = cheerio.load(body);
-      user.display_name = $('.sidebar h2').text();
-      user.bio = $('.sidebar div.bio p').text();
-      user.starts = Number($('.sidebar ul.delimited').first().text().match(/\d+/)[0]);
-      let talks = $('.talks .public');
+      user.display_name = extract.text(body, '.sidebar h2');
+      user.bio = extract.text(body, '.sidebar div.bio p');;
+      user.starts =  extract.number(body, '.sidebar ul.delimited');
+      let talks = extract.elements(body, '.talks .public');
       user.talks = [];
       _.forEach(talks, (item) => {
         let talk = {};
-        talk.title = $(item).find('h3.title a').text();
-        talk.date = new Date($(item).find('p.date').text().trim().split('by')[0]);
-        talk.thumb = $(item).find('.slide_preview img').attr('src');
-        talk.link = `${baseUrl}${$(item).find('.slide_preview').attr('href')}`
+        talk.title = extract.text(item, 'h3.title a');
+        talk.date = extract.date(item, 'p.date');
+        talk.thumb = extract.attr(item, '.slide_preview img', 'src');
+        talk.link = extract.link(item, '.slide_preview', baseUrl);
+
         user.talks.push(talk);
       });
 
@@ -46,13 +47,12 @@ export default class Speakerdeck {
         let error = new Error(response.headers.status)
         return cb(error);
       }
-      $ = cheerio.load(body);
-      talk.title = $('#talk-details header h1').text();
-      talk.date = new Date($('#talk-details header p mark').first().text());
-      talk.category = $('#talk-details header p mark').last().text();
-      talk.description = $('.description p').text();
-      talk.stars = $('.stargazers').text().match(/\d+/)[0];
-      talk.views = $('.views span').text().split(' ')[0];
+      talk.title = extract.text(body, '#talk-details header h1');
+      talk.date = extract.date(body, '#talk-details header p mark', true);
+      talk.category = extract.text(body, '#talk-details header p mark', 'last');
+      talk.description = extract.text(body, '.description p');
+      talk.stars = extract.number(body, '.stargazers');
+      talk.views = extract.split(body, '.views span', 0);
       talk.link = url;
       return cb(null, talk)
     });
@@ -63,15 +63,14 @@ export default class Speakerdeck {
     let $;
     let stars = [];
     request.get(url, (err, response, body) => {
-      $ = cheerio.load(body);
-      let talks = $('.talks .public');
+      let talks = extract.elements(body, '.talks .public');
       _.forEach(talks, (item) => {
         let talk = {};
-        talk.title = $(item).find('h3.title a').text();
-        talk.date = new Date($(item).find('p.date').text().trim().split('by')[0]);
-        talk.thumb = $(item).find('.slide_preview img').attr('src');
-        talk.link = `${baseUrl}${$(item).find('.slide_preview').attr('href')}`;
-        talk.author = $(item).find('p.date a').text();
+        talk.title = extract.text(item, 'h3.title a');
+        talk.date = extract.date(item, 'p.date');
+        talk.thumb = extract.attr(item, '.slide_preview img', 'src');
+        talk.link = extract.link(item, '.slide_preview', baseUrl);
+        talk.author = extract.text(item, 'p.date a');
         stars.push(talk);
       });
       return cb(null, stars);
@@ -86,12 +85,11 @@ export default class Speakerdeck {
         let error = new Error(response.headers.status)
         return cb(error);
       }
-      $ = cheerio.load(body);
-      let el = $('.sidebar ul li');
+      let elements = extract.elements(body, '.sidebar ul li');
       _.forEach(elements, (element) => {
         let category = {};
-        category.name = $(element).find('a').text();
-        category.link = `${baseUrl}${$(element).find('a').attr('href')}`
+        category.name = extract.text(element, 'a');
+        category.link = extract.link(element, 'a', baseUrl);
 
         categories.push(category);
       });
@@ -111,12 +109,11 @@ export default class Speakerdeck {
         let error = new Error(response.headers.status)
         return cb(error);
       }
-      $ = cheerio.load(body);
-      let elements = $('.talks .talk');
-      pages = $('.page').last().find('a').text();
+      let elements = extract.elements(body, '.talks .talk');
+      pages = extract.page(body, '.page');
       _.forEach(elements, (el, i) => {
         let result = {};
-        result.title = $(el).find('h3.title a').text();
+        result.title = extract.text(el, 'h3.title a');
 
         results.push(result)
       });
