@@ -20,6 +20,14 @@ var _cheerio = require('cheerio');
 
 var _cheerio2 = _interopRequireDefault(_cheerio);
 
+var _qs = require('qs');
+
+var _qs2 = _interopRequireDefault(_qs);
+
+var _lodash = require('lodash');
+
+var _lodash2 = _interopRequireDefault(_lodash);
+
 (0, _sourceMapSupport.install)();
 
 var baseUrl = 'https://speakerdeck.com/';
@@ -95,6 +103,26 @@ var Speakerdeck = (function () {
           categories.push(category);
         }
         return cb(null, categories);
+      });
+    }
+  }, {
+    key: 'search',
+    value: function search(opts, cb) {
+      var querystring = _qs2['default'].stringify(opts);
+      var url = baseUrl + 'search?' + querystring;
+      var $ = undefined;
+      var result = {};
+      var results = [];
+      _request2['default'].get(url, function (err, response, body) {
+        $ = _cheerio2['default'].load(body);
+        var elements = $('.talks .talk');
+        _lodash2['default'].forEach(elements, function (el, i) {
+
+          result.title = $(el).find('h3.title a').text();
+          results[i] = result;
+        });
+
+        return cb(null, results);
       });
     }
   }]);

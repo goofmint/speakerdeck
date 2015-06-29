@@ -1,6 +1,8 @@
 import { install } from 'source-map-support';install();
 import request from 'request';
 import cheerio from 'cheerio';
+import qs from 'qs';
+import _ from 'lodash';
 
 const baseUrl = 'https://speakerdeck.com/'
 export default class Speakerdeck {
@@ -65,6 +67,25 @@ export default class Speakerdeck {
         categories.push(category);
       }
       return cb(null, categories)
+    });
+  }
+
+  search(opts, cb){
+    let querystring = qs.stringify(opts);
+    let url = `${baseUrl}search?${querystring}`;
+    let $;
+    let result = {};
+    let results = [];
+    request.get(url, (err, response, body) => {
+      $ = cheerio.load(body);
+      let elements = $('.talks .talk');
+      _.forEach(elements, (el, i) => {
+
+        result.title = $(el).find('h3.title a').text();
+        results[i] = result;
+      });
+
+      return cb(null, results);
     });
   }
 }
