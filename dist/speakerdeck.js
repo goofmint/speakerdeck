@@ -58,14 +58,15 @@ var Speakerdeck = (function () {
         user.starts = Number($('.sidebar ul.delimited').first().text().match(/\d+/)[0]);
         var talks = $('.talks .public');
         user.talks = [];
-        for (var i = 0; i < talks.length; i++) {
+        _lodash2['default'].forEach(talks, function (item) {
           var talk = {};
-          talk.title = $(talks[i]).find('h3.title a').text();
-          talk.date = new Date($(talks[i]).find('p.date').text().trim().split('by')[0]);
-          talk.thumb = $(talks[i]).find('.slide_preview img').attr('src');
-          talk.link = '' + baseUrl + $(talks[i]).find('.slide_preview').attr('href');
+          talk.title = $(item).find('h3.title a').text();
+          talk.date = new Date($(item).find('p.date').text().trim().split('by')[0]);
+          talk.thumb = $(item).find('.slide_preview img').attr('src');
+          talk.link = '' + baseUrl + $(item).find('.slide_preview').attr('href');
           user.talks.push(talk);
-        }
+        });
+
         return cb(null, user);
       });
     }
@@ -100,15 +101,15 @@ var Speakerdeck = (function () {
       _request2['default'].get(url, function (err, response, body) {
         $ = _cheerio2['default'].load(body);
         var talks = $('.talks .public');
-        for (var i = 0; i < talks.length; i++) {
+        _lodash2['default'].forEach(talks, function (item) {
           var talk = {};
-          talk.title = $(talks[i]).find('h3.title a').text();
-          talk.date = new Date($(talks[i]).find('p.date').text().trim().split('by')[0]);
-          talk.thumb = $(talks[i]).find('.slide_preview img').attr('src');
-          talk.link = '' + baseUrl + $(talks[i]).find('.slide_preview').attr('href');
-          talk.author = $(talks[i]).find('p.date a').text();
+          talk.title = $(item).find('h3.title a').text();
+          talk.date = new Date($(item).find('p.date').text().trim().split('by')[0]);
+          talk.thumb = $(item).find('.slide_preview img').attr('src');
+          talk.link = '' + baseUrl + $(item).find('.slide_preview').attr('href');
+          talk.author = $(item).find('p.date a').text();
           stars.push(talk);
-        }
+        });
         return cb(null, stars);
       });
     }
@@ -124,13 +125,14 @@ var Speakerdeck = (function () {
         }
         $ = _cheerio2['default'].load(body);
         var el = $('.sidebar ul li');
-        for (var i = 0; i < el.length; i++) {
+        _lodash2['default'].forEach(elements, function (element) {
           var category = {};
-          category.name = $(el[i]).find('a').text();
-          category.link = '' + baseUrl + $(el[i]).find('a').attr('href');
+          category.name = $(element).find('a').text();
+          category.link = '' + baseUrl + $(element).find('a').attr('href');
 
           categories.push(category);
-        }
+        });
+
         return cb(null, categories);
       });
     }

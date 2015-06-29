@@ -10,6 +10,7 @@ describe('Speakerdeck', () => {
   it('should be return a user', (done) => {
     s.getUser('paulohp', (err, data) => {
       expect(data.display_name).to.equal('Paulo Pires');
+      expect(data.talks).to.be.a('array');
       expect(err).to.be.a('null');
       done();
     });
