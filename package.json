@@ -1,10 +1,11 @@
 {
   "name": "speakerdeck",
-  "version": "3.1.1",
+  "version": "3.1.2",
   "description": "Speakerdeck API",
   "main": "dist/speakerdeck.js",
   "scripts": {
-    "test": "./node_modules/mocha/bin/mocha"
+    "test": "./node_modules/mocha/bin/mocha",
+    "postinstall": "./node_modules/gulp/bin/gulp.js babel"
   },
   "keywords": [
     "speakerdeck",
@@ -17,15 +18,15 @@
     "cheerio": "^0.19.0",
     "lodash": "^3.9.3",
     "qs": "^3.1.0",
-    "request": "^2.58.0"
-  },
-  "devDependencies": {
+    "request": "^2.58.0",
     "babel": "^5.6.14",
-    "chai": "^3.0.0",
     "gulp": "^3.9.0",
     "gulp-babel": "^5.1.0",
     "gulp-sourcemaps": "^1.5.2",
-    "mocha": "^2.2.5",
     "source-map-support": "^0.3.2"
+  },
+  "devDependencies": {
+    "chai": "^3.0.0",
+    "mocha": "^2.2.5"
   }
 }
