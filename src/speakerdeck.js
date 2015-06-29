@@ -23,9 +23,9 @@ export default class Speakerdeck {
       user.bio = $('.sidebar div.bio p').text();
       user.starts = Number($('.sidebar ul.delimited').first().text().match(/\d+/)[0]);
       let talks = $('.talks .public');
-      let talk = {};
       user.talks = [];
       for (var i = 0; i < talks.length; i++) {
+        let talk = {};
         talk.title = $(talks[i]).find('h3.title a').text();
         talk.date = new Date($(talks[i]).find('p.date').text().trim().split('by')[0]);
         talk.thumb = $(talks[i]).find('.slide_preview img').attr('src');
@@ -56,11 +56,11 @@ export default class Speakerdeck {
   getCategories(cb) {
     let $;
     let categories = [];
-    let category = {};
     request.get(baseUrl, (err, response, body) => {
       $ = cheerio.load(body);
       let el = $('.sidebar ul li');
       for (var i = 0; i < el.length; i++) {
+        let category = {};
         category.name = $(el[i]).find('a').text();
         category.link = `${baseUrl}${$(el[i]).find('a').attr('href')}`
 
@@ -74,18 +74,20 @@ export default class Speakerdeck {
     let querystring = qs.stringify(opts);
     let url = `${baseUrl}search?${querystring}`;
     let $;
-    let result = {};
     let results = [];
+    let pages = 0;
     request.get(url, (err, response, body) => {
       $ = cheerio.load(body);
       let elements = $('.talks .talk');
+      pages = $('.page').last().find('a').text();
       _.forEach(elements, (el, i) => {
-
+        let result = {};
         result.title = $(el).find('h3.title a').text();
-        results[i] = result;
+
+        results.push(result)
       });
 
-      return cb(null, results);
+      return cb(null, {results, pages: pages});
     });
   }
 }

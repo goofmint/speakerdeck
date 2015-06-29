@@ -33,7 +33,7 @@ describe('Speakerdeck', () => {
 
   it('should be search and return a array of results', (done) => {
     s.search({q: 'Angular.js', page: 1}, (err, data) => {
-      expect(data).to.have.length(15);
+      expect(data.results).to.have.length(15);
       expect(err).to.be.a('null');
       done();
     });

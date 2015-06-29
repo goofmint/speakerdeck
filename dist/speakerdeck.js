@@ -57,9 +57,9 @@ var Speakerdeck = (function () {
         user.bio = $('.sidebar div.bio p').text();
         user.starts = Number($('.sidebar ul.delimited').first().text().match(/\d+/)[0]);
         var talks = $('.talks .public');
-        var talk = {};
         user.talks = [];
         for (var i = 0; i < talks.length; i++) {
+          var talk = {};
           talk.title = $(talks[i]).find('h3.title a').text();
           talk.date = new Date($(talks[i]).find('p.date').text().trim().split('by')[0]);
           talk.thumb = $(talks[i]).find('.slide_preview img').attr('src');
@@ -92,11 +92,11 @@ var Speakerdeck = (function () {
     value: function getCategories(cb) {
       var $ = undefined;
       var categories = [];
-      var category = {};
       _request2['default'].get(baseUrl, function (err, response, body) {
         $ = _cheerio2['default'].load(body);
         var el = $('.sidebar ul li');
         for (var i = 0; i < el.length; i++) {
+          var category = {};
           category.name = $(el[i]).find('a').text();
           category.link = '' + baseUrl + $(el[i]).find('a').attr('href');
 
@@ -111,18 +111,20 @@ var Speakerdeck = (function () {
       var querystring = _qs2['default'].stringify(opts);
       var url = baseUrl + 'search?' + querystring;
       var $ = undefined;
-      var result = {};
       var results = [];
+      var pages = 0;
       _request2['default'].get(url, function (err, response, body) {
         $ = _cheerio2['default'].load(body);
         var elements = $('.talks .talk');
+        pages = $('.page').last().find('a').text();
         _lodash2['default'].forEach(elements, function (el, i) {
-
+          var result = {};
           result.title = $(el).find('h3.title a').text();
-          results[i] = result;
+
+          results.push(result);
         });
 
-        return cb(null, results);
+        return cb(null, { results: results, pages: pages });
       });
     }
   }]);
