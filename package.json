@@ -4,8 +4,7 @@
   "description": "Speakerdeck API",
   "main": "dist/speakerdeck.js",
   "scripts": {
-    "test": "./node_modules/mocha/bin/mocha",
-    "postinstall": "./node_modules/gulp/bin/gulp.js babel"
+    "test": "./node_modules/mocha/bin/mocha"
   },
   "keywords": [
     "speakerdeck",
